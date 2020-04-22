@@ -13,6 +13,6 @@ npm i -g onetime-file-share
 ```
 fshare <filepath>
 ```` 
-![image](https://user-images.githubusercontent.com/14078661/80024985-4aad3100-84b6-11ea-9634-f1556c170be0.png)
+![image](https://user-images.githubusercontent.com/14078661/80027429-218e9f80-84ba-11ea-8ed8-1415e1b16031.png)
 
 
