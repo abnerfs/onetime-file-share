@@ -1,12 +1,17 @@
 import getport from 'get-port';
 import express from 'express';
 import morgan from 'morgan';
+import path from 'path';
+import { readFileSync } from 'fs';
 const ngrok = require('ngrok');
 const qrcode = require('qrcode-terminal');
+
+const template = readFileSync(__dirname + '/../template/download.html', 'utf8');
 
 const startDownloadFileServer = async (filePath: string, oneTime: boolean = true) => {
     const PORT = await getport();
     const app = express();
+
 
     app.use(morgan('dev'));
 
@@ -21,6 +26,8 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
         });
     }
 
+    let url = '';
+    const fileName = path.basename(filePath);
 
     app.use(function ({ }, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,6 +37,19 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
     });
 
     app.get('/', ({ }, res) => {
+        if (fileDownloaded) {
+            res.status(404).send({
+                msg: 'Already being downloaded...'
+            })
+        }
+        else {
+            //Improve layout later
+            res.send(template.replace('{{downloadurl}}', url).replace('{{filename}}', fileName));
+        }
+        
+    });
+
+    app.get('/download', ({ }, res) => {
         if (fileDownloaded)
             res.status(404).send({
                 msg: 'Already being downloaded...'
@@ -44,7 +64,7 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
     });
 
     const server = app.listen(PORT, async () => {
-        const url = await ngrok.connect(PORT);
+        url = await ngrok.connect(PORT);
         console.log(`One time download link : ${url}`);
         qrcode.generate(url, { small: true });
     })
