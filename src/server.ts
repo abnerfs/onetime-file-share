@@ -11,15 +11,17 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
     app.use(morgan('dev'));
 
     let fileDownloaded = false;
-    
+
     const killserver = () => {
         console.log('File downloaded, closing server.');
         server.close(() => {
-            process.exit();
+            setTimeout(() => {
+                process.exit(0);
+            }, 2000);
         });
     }
 
-    
+
     app.use(function ({ }, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -36,10 +38,8 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
             console.log('File being downloaded...')
             fileDownloaded = true;
             res.download(filePath);
-            res.on('finish', () => {                
-                killserver();                
-            });
-            
+            res.on('finish', () => killserver());
+            res.on('close', () => killserver());
         }
     });
 

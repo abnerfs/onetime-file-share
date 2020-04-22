@@ -9,9 +9,9 @@ const getFilePath = () => {
         throw new Error(`File not found: ${filePath}`)
 
     const fileStats = fs.statSync(filePath);
-    if(fileStats.isDirectory())
+    if (fileStats.isDirectory())
         throw new Error(`Send directory not supported yet`);
-        
+
     return filePath;
 };
 
