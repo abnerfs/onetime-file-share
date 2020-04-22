@@ -1,13 +1,14 @@
 import getport from 'get-port';
 import express from 'express';
-import path from 'path';
-import { createReadStream } from 'fs';
+import morgan from 'morgan';
 const ngrok = require('ngrok');
 const qrcode = require('qrcode-terminal');
 
 const startDownloadFileServer = async (filePath: string, oneTime: boolean = true) => {
     const PORT = await getport();
     const app = express();
+
+    app.use(morgan('dev'));
 
     let fileDownloaded = false;
     
@@ -32,6 +33,7 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
                 msg: 'Already being downloaded...'
             })
         else {
+            console.log('File being downloaded...')
             fileDownloaded = true;
             res.download(filePath);
             res.on('finish', () => {                

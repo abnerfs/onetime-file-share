@@ -8,6 +8,8 @@ npm i -g onetime-file-share
 
 # Usage
 ```
-fshare <filename>
+fshare <filepath>
 ```` 
+![image](https://user-images.githubusercontent.com/14078661/80024985-4aad3100-84b6-11ea-9634-f1556c170be0.png)
+
 

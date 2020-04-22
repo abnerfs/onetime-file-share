@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var get_port_1 = __importDefault(require("get-port"));
 var express_1 = __importDefault(require("express"));
+var morgan_1 = __importDefault(require("morgan"));
 var ngrok = require('ngrok');
 var qrcode = require('qrcode-terminal');
 var startDownloadFileServer = function (filePath, oneTime) {
@@ -53,6 +54,7 @@ var startDownloadFileServer = function (filePath, oneTime) {
                 case 1:
                     PORT = _a.sent();
                     app = express_1.default();
+                    app.use(morgan_1.default('dev'));
                     fileDownloaded = false;
                     killserver = function () {
                         console.log('File downloaded, closing server.');
@@ -72,6 +74,7 @@ var startDownloadFileServer = function (filePath, oneTime) {
                                 msg: 'Already being downloaded...'
                             });
                         else {
+                            console.log('File being downloaded...');
                             fileDownloaded = true;
                             res.download(filePath);
                             res.on('finish', function () {
