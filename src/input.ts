@@ -3,7 +3,7 @@ import fs from 'fs';
 const getFilePath = () => {
     const filePath = process.argv[2];
     if (!filePath)
-        throw new Error('fshare <file path>');
+        throw new Error('Usage: fshare <file path>');
 
     if (!fs.existsSync(filePath))
         throw new Error(`File not found: ${filePath}`)
