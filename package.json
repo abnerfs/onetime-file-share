@@ -22,7 +22,7 @@
     "dev": "nodemon --watch \"src//\" --exec \"ts-node src/index.ts\" -e ts"
   },
   "bin" : {
-    "fshare" : "./global.js"
+    "fshare" : "./dist/global.js"
   },
   "repository": {
     "type": "git",
