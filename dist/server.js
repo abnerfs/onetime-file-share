@@ -59,7 +59,9 @@ var startDownloadFileServer = function (filePath, oneTime) {
                     killserver = function () {
                         console.log('File downloaded, closing server.');
                         server.close(function () {
-                            process.exit();
+                            setTimeout(function () {
+                                process.exit(0);
+                            }, 2000);
                         });
                     };
                     app.use(function (_a, res, next) {
@@ -77,9 +79,8 @@ var startDownloadFileServer = function (filePath, oneTime) {
                             console.log('File being downloaded...');
                             fileDownloaded = true;
                             res.download(filePath);
-                            res.on('finish', function () {
-                                killserver();
-                            });
+                            res.on('finish', function () { return killserver(); });
+                            res.on('close', function () { return killserver(); });
                         }
                     });
                     server = app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
