@@ -41,8 +41,8 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
 
     app.listen(PORT, async () => {
         const url = await ngrok.connect(PORT);
-        console.log(`File available in link : ${url}`);
-        qrcode.generate(url, { small: true });
+        console.log(`One time download link : ${url}`);
+        qrcode.generate(url);
     })
 }
 
