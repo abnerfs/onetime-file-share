@@ -52,4 +52,7 @@ exports.fshare = (function () { return __awaiter(void 0, void 0, void 0, functio
         }
     });
 }); });
-// fshare();
+exports.fshare()
+    .catch(function (err) {
+    console.log("Error: " + err.message);
+});

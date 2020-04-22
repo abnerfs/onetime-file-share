@@ -7,7 +7,7 @@ var fs_1 = __importDefault(require("fs"));
 var getFilePath = function () {
     var filePath = process.argv[2];
     if (!filePath)
-        throw new Error('fshare <file path>');
+        throw new Error('Usage: fshare <file path>');
     if (!fs_1.default.existsSync(filePath))
         throw new Error("File not found: " + filePath);
     var fileStats = fs_1.default.statSync(filePath);
