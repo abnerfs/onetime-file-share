@@ -44,78 +44,77 @@ var express_1 = __importDefault(require("express"));
 var morgan_1 = __importDefault(require("morgan"));
 var path_1 = __importDefault(require("path"));
 var fs_1 = require("fs");
+var util_1 = require("./util");
 var ngrok = require('ngrok');
 var qrcode = require('qrcode-terminal');
 var template = fs_1.readFileSync(__dirname + '/../template/download.html', 'utf8');
-var startDownloadFileServer = function (filePath, oneTime) {
-    if (oneTime === void 0) { oneTime = true; }
-    return __awaiter(void 0, void 0, void 0, function () {
-        var PORT, app, fileDownloaded, killserver, url, fileName, server;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, get_port_1.default()];
-                case 1:
-                    PORT = _a.sent();
-                    app = express_1.default();
-                    app.use(morgan_1.default('dev'));
-                    fileDownloaded = false;
-                    killserver = function () {
-                        console.log('File downloaded, closing server.');
-                        server.close(function () {
-                            setTimeout(function () {
-                                process.exit(0);
-                            }, 2000);
+var startDownloadFileServer = function (filePath) { return __awaiter(void 0, void 0, void 0, function () {
+    var PORT, app, fileDownloaded, killserver, url, fileName, server;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, get_port_1.default()];
+            case 1:
+                PORT = _a.sent();
+                app = express_1.default();
+                app.use(morgan_1.default('dev'));
+                fileDownloaded = false;
+                killserver = function () {
+                    console.log('File downloaded, closing server.');
+                    server.close(function () {
+                        setTimeout(function () {
+                            process.exit(0);
+                        }, 2000);
+                    });
+                };
+                url = '';
+                fileName = path_1.default.basename(filePath);
+                app.use(function (_a, res, next) {
+                    res.setHeader('Access-Control-Allow-Origin', '*');
+                    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+                    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+                    next();
+                });
+                app.get('/', function (_a, res) {
+                    if (fileDownloaded) {
+                        res.status(404).send({
+                            msg: 'Already being downloaded...'
                         });
-                    };
-                    url = '';
-                    fileName = path_1.default.basename(filePath);
-                    app.use(function (_a, res, next) {
-                        res.setHeader('Access-Control-Allow-Origin', '*');
-                        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-                        res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
-                        next();
-                    });
-                    app.get('/', function (_a, res) {
-                        if (fileDownloaded) {
-                            res.status(404).send({
-                                msg: 'Already being downloaded...'
-                            });
-                        }
-                        else {
-                            //Improve layout later
-                            res.send(template.replace('{{downloadurl}}', url).replace('{{filename}}', fileName));
-                        }
-                    });
-                    app.get('/download', function (_a, res) {
-                        if (fileDownloaded)
-                            res.status(404).send({
-                                msg: 'Already being downloaded...'
-                            });
-                        else {
-                            console.log('File being downloaded...');
-                            fileDownloaded = true;
-                            res.download(filePath);
-                            res.on('finish', function () { return killserver(); });
-                            res.on('close', function () { return killserver(); });
-                        }
-                    });
-                    server = app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, ngrok.connect(PORT)];
-                                case 1:
-                                    url = _a.sent();
-                                    console.log("One time download link : " + url);
-                                    qrcode.generate(url, { small: true });
-                                    return [2 /*return*/];
-                            }
+                    }
+                    else {
+                        //Improve layout later
+                        var templateSend = util_1.replaceAll(template, '{{downloadurl}}', url);
+                        templateSend = util_1.replaceAll(templateSend, '{{filename}}', fileName);
+                        res.send(templateSend);
+                    }
+                });
+                app.get('/download', function (_a, res) {
+                    if (fileDownloaded)
+                        res.status(404).send({
+                            msg: 'Already being downloaded...'
                         });
-                    }); });
-                    return [2 /*return*/];
-            }
-        });
+                    else {
+                        console.log('File being downloaded...');
+                        fileDownloaded = true;
+                        res.download(filePath);
+                        res.on('finish', function () { return killserver(); });
+                    }
+                });
+                server = app.listen(PORT, function () { return __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0: return [4 /*yield*/, ngrok.connect(PORT)];
+                            case 1:
+                                url = _a.sent();
+                                console.log("One time download link : " + url);
+                                qrcode.generate(url, { small: true });
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
+                return [2 /*return*/];
+        }
     });
-};
+}); };
 exports.server = {
     startDownloadFileServer: startDownloadFileServer
 };

@@ -1,3 +1,3 @@
 export declare const server: {
-    startDownloadFileServer: (filePath: string, oneTime?: boolean) => Promise<void>;
+    startDownloadFileServer: (filePath: string) => Promise<void>;
 };

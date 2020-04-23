@@ -4,13 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>OneTime FileShare - github.com/abnerfs</title>
 </head>
 
 <body>
     <h1>One Time File Share</h1>
-    <a class="btn btn-success" href="{{downloadurl}}/download">Download: {{filename}}</button>
+    <p id="status"></p>
+    <button id="dl-button" class="btn btn-success" onclick="download()">Download: {{filename}}</button>
+    <script>
+        var downloaded = false;
+
+        function download() {
+            if (downloaded)
+                return false;
+
+            downloaded = true;
+            var status = document.getElementById('status');
+            status.innerText = "Downloading to browser, please wait...";
+            document.getElementById('dl-button').classList += ' disabled ';
+
+            return fetch('/download')
+                .then(function (response) {
+                    return response.blob();
+                }).then(function (blob) {
+                    var a = document.createElement("a");
+                    document.body.appendChild(a);
+                    a.style = "display: none";
+
+                    let url = window.URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = '{{filename}}';
+                    a.click();
+
+                    window.URL.revokeObjectURL(url);
+                    status.innerText = 'Download done, you can close this window :D'
+                })
+                .catch(err => {
+                    status.innerText = 'Error while downloading :/, ' + err.message;
+                })
+        }
+
+    </script>
 </body>
+
+
 
 </html>

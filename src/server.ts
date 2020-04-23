@@ -3,12 +3,13 @@ import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import { readFileSync } from 'fs';
+import { replaceAll } from './util';
 const ngrok = require('ngrok');
 const qrcode = require('qrcode-terminal');
 
 const template = readFileSync(__dirname + '/../template/download.html', 'utf8');
 
-const startDownloadFileServer = async (filePath: string, oneTime: boolean = true) => {
+const startDownloadFileServer = async (filePath: string) => {
     const PORT = await getport();
     const app = express();
 
@@ -44,9 +45,11 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
         }
         else {
             //Improve layout later
-            res.send(template.replace('{{downloadurl}}', url).replace('{{filename}}', fileName));
+            let templateSend = replaceAll(template, '{{downloadurl}}', url);
+            templateSend = replaceAll(templateSend, '{{filename}}', fileName);
+            res.send(templateSend);
         }
-        
+
     });
 
     app.get('/download', ({ }, res) => {
@@ -59,7 +62,6 @@ const startDownloadFileServer = async (filePath: string, oneTime: boolean = true
             fileDownloaded = true;
             res.download(filePath);
             res.on('finish', () => killserver());
-            res.on('close', () => killserver());
         }
     });
 
