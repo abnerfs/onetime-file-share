@@ -1,6 +1,6 @@
 {
   "name": "onetime-file-share",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,7 +30,7 @@
     "type": "git",
     "url": "git+https://github.com/abnerfs/onetime-file-share.git"
   },
-  "keywords": [],
+  "keywords": ["ngrok", "file", "share", "no firewall", "link", "generate link"],
   "author": "",
   "license": "ISC",
   "bugs": {
